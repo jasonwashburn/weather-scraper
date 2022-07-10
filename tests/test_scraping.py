@@ -33,8 +33,11 @@ def wowt_ten_day_content() -> str:
 def test_scrape_returns_status_ok():
     """Tests wowt url returns status code 200 and html document."""
     result = scrape(site_name="wowt")
-    assert result.status_code == 200
-    assert result.text[:15] == "<!DOCTYPE html>"
+    if result is not None:
+        assert result.status_code == 200
+        assert result.text[:15] == "<!DOCTYPE html>"
+    else:
+        raise AssertionError("Result returned None")
 
 
 def test_parse_wowt_hourly(wowt_hourly_response: str):
