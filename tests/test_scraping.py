@@ -1,27 +1,48 @@
-import pytest
+"""Tests for scraping module."""
+
 import pendulum
-from weather_scraper.scraping import parse_wowt_ten_day, scrape, parse_wowt_hourly
+import pytest
+
+from weather_scraper.scraping import parse_wowt_hourly
+from weather_scraper.scraping import parse_wowt_ten_day
+from weather_scraper.scraping import scrape
 
 
 @pytest.fixture
 def wowt_hourly_response() -> str:
-    with open("tests/wowt_hourly_fixture.txt", "r") as f:
+    """Testing fixture for canned response from wowt website with hourly data.
+
+    Returns:
+        str: HTML source for wowt website with hourly data.
+    """
+    with open("tests/wowt_hourly_fixture.txt") as f:
         return f.read()
 
 
 @pytest.fixture
 def wowt_ten_day_content() -> str:
-    with open("tests/wowt_10day_fixture.txt", "r") as f:
+    """Testing fixture for canned response from wowt website with 10-day data.
+
+    Returns:
+        str: HTML source for wowt website with 10-day data.
+    """
+    with open("tests/wowt_10day_fixture.txt") as f:
         return f.read()
 
 
 def test_scrape_returns_status_ok():
+    """Tests wowt url returns status code 200 and html document."""
     result = scrape(site_name="wowt")
     assert result.status_code == 200
     assert result.text[:15] == "<!DOCTYPE html>"
 
 
-def test_parse_wowt_hourly(wowt_hourly_response):
+def test_parse_wowt_hourly(wowt_hourly_response: str):
+    """Tests proper parsing of wowt hourly data.
+
+    Args:
+        wowt_hourly_response (str): html source for wowt hourly data.
+    """
     recorded_time = pendulum.datetime(
         year=2022, month=1, day=1, hour=1, tz="America/Chicago"
     )
@@ -105,7 +126,12 @@ def test_parse_wowt_hourly(wowt_hourly_response):
     assert result == expected_result
 
 
-def test_parse_wowt_ten_day(wowt_ten_day_content):
+def test_parse_wowt_ten_day(wowt_ten_day_content: str):
+    """Tests proper parsing of wowt 10-day data.
+
+    Args:
+        wowt_ten_day_content (str): html source for wowt 10-day data.
+    """
     recorded_time = pendulum.datetime(
         year=2022, month=1, day=1, hour=1, tz="America/Chicago"
     )
